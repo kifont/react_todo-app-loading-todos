@@ -7,6 +7,7 @@ import { Header } from './components/Header';
 import { Todo } from './types/Todo';
 import { Footer } from './components/Footer';
 import { TodoList } from './components/TodoList';
+import { ErrorNotification } from './components/ErrorNotification';
 
 function getFilteredTodos(
   currentTodos: Todo[],
@@ -46,16 +47,6 @@ export const App: React.FC = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  useEffect(() => {
-    if (!error) {
-      return;
-    }
-
-    const timer = setTimeout(() => setError(''), 3000);
-
-    return () => clearTimeout(timer);
-  }, [error]);
-
   if (!USER_ID) {
     return <UserWarning />;
   }
@@ -82,18 +73,7 @@ export const App: React.FC = () => {
 
       {/* DON'T use conditional rendering to hide the notification */}
       {/* Add the 'hidden' class to hide the message smoothly */}
-      <div
-        data-cy="ErrorNotification"
-        className={`notification is-danger is-light has-text-weight-normal ${!error ? 'hidden' : ''}`}
-      >
-        <button
-          data-cy="HideErrorButton"
-          type="button"
-          className="delete"
-          onClick={() => setError('')}
-        />
-        {error}
-      </div>
+      <ErrorNotification errorMessage={error} onClose={() => setError('')} />
     </div>
   );
 };
